@@ -20,11 +20,30 @@ install() {
 		chmod +x bot
 		chmod +x tg
 }
-
-if [ "$1" = "install" ]; then
-  install
-  else
-
+case $1 in
+    install)
+    	show_logo_slowly
+    	configure ${2}
+    	exit ;;
+    update)
+    	show_logo
+    	update
+    	exit ;;
+	tmux)
+    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
+		ok=`tmux new-session -s $TMUX_SESSION -d "./bin/telegram-cli -s ./bot/bot.lua"`
+		if [[ $ok ]]; then echo "New session tmux: ${TMUX_SESSION}"; else echo "Error while run tgcli"; fi
+    	exit ;;
+	attach)
+    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
+		tmux attach-session -t $TMUX_SESSION
+    	exit ;;
+	kill)
+    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
+		tmux kill-session -t $TMUX_SESSION
+    	exit ;;
+	
+		
 if [ ! -f ./tg/tgcli ]; then
     echo "tg not found"
     echo "Run $0 install"
